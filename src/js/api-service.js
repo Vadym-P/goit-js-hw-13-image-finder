@@ -5,14 +5,13 @@ export default class ImgApiService {
   }
 
   fetchImages() {
-    // const url = `https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=23107391-e229b72ce50d9e428f6df8953`;
+    const url = `https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=23107391-e229b72ce50d9e428f6df8953`;
 
-    return fetch(`https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=23107391-e229b72ce50d9e428f6df8953`)
+    return fetch(url)
       .then(r => r.json())
       .then(data => {
         this.addPage();
-
-        return data.image;
+        return data.hits;
       });
   }
 
