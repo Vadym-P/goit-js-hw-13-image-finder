@@ -11,6 +11,7 @@ const refs = {
   searchBtn: document.querySelector('.js-btn-src'),
   loadMoreBtn: document.querySelector('[data-action="load-more"]'),
   gallery: document.querySelector('.gallery'),
+  labelLoadMoreBtn: document.querySelector('.label-load-more__btn'),
 };
 const imgApiService = new ImgApiService();
 
@@ -32,29 +33,31 @@ function clearInputField(e) {
 function onSearch(e) {
   e.preventDefault();
 
+  clearGalleryContainerNewRequest();
   imgApiService.query = e.currentTarget.elements.query.value.trim();
   if (imgApiService.query === '') {
-    error({
+    return error({
       title: `Nothing entered.`,
       text: `Please, enter search parameters!`,
       styling: 'brighttheme',
       delay: 3000,
     });
-    return;
   } else {
+    removeHiddenClass();
+    addSpinner();
     imgApiService.resetPage();
-    imgApiService
-      .fetchImages()
-      .then(hits => {
-        clearGalleryContainerNewRequest();
-        appendImagesMarkup(hits);
-      })
-      .then(removeHidden);
+    imgApiService.fetchImages().then(hits => {
+      appendImagesMarkup(hits);
+      removeSpinner();
+      removeHiddenClass();
+    });
   }
 }
 
 function onLoadMore() {
-  imgApiService.fetchImages().then(appendImagesMarkup);
+  addSpinner();
+  imgApiService.fetchImages().then(appendImagesMarkup).then(() => removeSpinner());
+  
 }
 
 function appendImagesMarkup(hits) {
@@ -67,9 +70,21 @@ function clearGalleryContainerNewRequest() {
 }
 
 function addHiddenClass() {
-  refs.loadMoreBtn.classList.add('hidden');
+  refs.loadMoreBtn.classList.add('is-hidden');
 }
 
-function removeHidden() {
-  refs.loadMoreBtn.classList.remove('hidden');
+function removeHiddenClass() {
+  refs.loadMoreBtn.classList.remove('is-hidden');
+}
+
+function addSpinner() {
+  refs.labelLoadMoreBtn.textContent = 'Loading';
+  refs.loadMoreBtn.setAttribute('disabled', true);
+  refs.loadMoreBtn.classList.add('spin');
+}
+
+function removeSpinner() {
+  refs.labelLoadMoreBtn.textContent = 'Load more';
+  refs.loadMoreBtn.removeAttribute('disabled');
+  refs.loadMoreBtn.classList.remove('spin');
 }

@@ -1,8 +1,11 @@
 .load-more-btn {
+    position: relative;
     display: block;
     margin: 0 auto;
-    width: 100px;
+    width: 200px;
+    height: 37px;
     padding: 5px;
+    margin-bottom: 15px;
     cursor: pointer;
     background-color: rgb(55, 72, 224);
     color: rgb(255, 255, 255);
@@ -12,10 +15,32 @@
     &:hover,
     &:focus {
         background-color: rgb(79, 60, 250);
-    font-weight: 700;
     }
 }
 
-.hidden {
+.is-hidden {
     display: none;
 }
+
+@keyframes spin {
+    0% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+.spin {
+    background-color: rgb(174, 166, 248);
+    cursor: auto;
+
+    &::before {
+        position: absolute;
+        display: block;
+        content: "";
+        width: 20px;
+        height: 20px;
+        margin-left: 30px;
+        border-radius: 50%;
+        border: 4px dotted  rgb(255, 255, 255);
+        animation: spin 1s infinite cubic-bezier(1,1,0,0);
+    }
+}
+
