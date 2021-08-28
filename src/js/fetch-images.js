@@ -4,6 +4,7 @@ import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/desktop/dist/PNotifyDesktop';
 import '@pnotify/core/dist/BrightTheme.css';
 import { error } from '@pnotify/core';
+import * as basicLightbox from 'basiclightbox';
 
 const refs = {
   searchForm: document.querySelector('.search-form'),
@@ -12,14 +13,22 @@ const refs = {
   loadMoreBtn: document.querySelector('[data-action="load-more"]'),
   gallery: document.querySelector('.gallery'),
   labelLoadMoreBtn: document.querySelector('.label-load-more__btn'),
+  observeListener: document.querySelector('.for-observe'),
+  img: document.querySelector('.img-item'),
 };
 const imgApiService = new ImgApiService();
+const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 1.0,
+  };
+  const observer = new IntersectionObserver(onLoadMore, options);
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 refs.input.addEventListener('input', clearInputField);
+refs.gallery.addEventListener('click', onImgClick);
 
-addHiddenClass();
 
 function clearInputField(e) {
   const inputField = e.target.value.trim();
@@ -33,7 +42,7 @@ function clearInputField(e) {
 function onSearch(e) {
   e.preventDefault();
 
-  clearGalleryContainerNewRequest();
+  refs.gallery.innerHTML = '';
   imgApiService.query = e.currentTarget.elements.query.value.trim();
   if (imgApiService.query === '') {
     return error({
@@ -49,24 +58,26 @@ function onSearch(e) {
     imgApiService.fetchImages().then(hits => {
       appendImagesMarkup(hits);
       removeSpinner();
-      removeHiddenClass();
     });
   }
 }
 
+
 function onLoadMore() {
-  addSpinner();
-  imgApiService.fetchImages().then(appendImagesMarkup).then(() => removeSpinner());
+    observer.observe(refs.observeListener);
+addSpinner();
+  imgApiService.fetchImages().then(appendImagesMarkup).then(() => {
+      removeSpinner()
+      refs.loadMoreBtn.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    });
   
 }
 
 function appendImagesMarkup(hits) {
   refs.gallery.insertAdjacentHTML('beforeend', imagesTpl(hits));
-}
-
-function clearGalleryContainerNewRequest() {
-  refs.gallery.innerHTML = '';
-  addHiddenClass();
 }
 
 function addHiddenClass() {
@@ -87,4 +98,16 @@ function removeSpinner() {
   refs.labelLoadMoreBtn.textContent = 'Load more';
   refs.loadMoreBtn.removeAttribute('disabled');
   refs.loadMoreBtn.classList.remove('spin');
+}
+
+function onImgClick(e) {
+        if (e.target.nodeName !== 'IMG') {
+          return;
+        }
+        
+        const instance = basicLightbox.create(`
+              <img src="${e.target.dataset.source}" width="800" height="600">
+          `);
+
+        instance.show();
 }

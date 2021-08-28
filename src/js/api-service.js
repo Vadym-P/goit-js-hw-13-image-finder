@@ -13,9 +13,9 @@ export default class ImgApiService {
     return fetch(url)
       .then(response => response.json())
       .then(({ hits }) => {
-        this.addPage();
-        return hits;
-      });
+          this.addPage();
+          return hits;
+        });
   }
 
   addPage() {

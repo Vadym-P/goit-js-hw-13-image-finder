@@ -5,7 +5,7 @@
     width: 200px;
     height: 37px;
     padding: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     cursor: pointer;
     background-color: rgb(55, 72, 224);
     color: rgb(255, 255, 255);
@@ -43,4 +43,9 @@
         animation: spin 1s infinite cubic-bezier(1,1,0,0);
     }
 }
+
+.for-observe {
+    height: 5px;
+}
+
 
