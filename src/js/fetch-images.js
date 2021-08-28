@@ -20,7 +20,7 @@ const imgApiService = new ImgApiService();
 const options = {
     root: null,
     rootMargin: '0px',
-    threshold: 1.0,
+    threshold: 0.2,
   };
   const observer = new IntersectionObserver(onLoadMore, options);
 
@@ -105,9 +105,7 @@ function onImgClick(e) {
           return;
         }
         
-        const instance = basicLightbox.create(`
-              <img src="${e.target.dataset.source}" width="800" height="600">
-          `);
+        const instance = basicLightbox.create(`<img src="${e.target.dataset.source}" width="800" height="600">`);
 
         instance.show();
 }
